@@ -1,1 +1,1 @@
-# Bank-Account-Mangement
+# Bank-Account-Management
