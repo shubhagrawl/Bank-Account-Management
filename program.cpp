@@ -23,6 +23,36 @@ public: //Functions
     void edit_rec();
     void delete_rec();
 }obj; // Defining an object to the class
+
+class employee_query
+{
+private:
+    char employee_number[20];
+    char e_firstName[10];
+    char e_lastName[10];
+    //float total_Balance;
+public: //Functions
+    void read_data();
+    void show_data();
+    void write_rec();
+    void read_rec();
+    void search_rec();
+    void edit_rec();
+    void delete_rec();
+}obj1;
+
+void employee_query::read_data()
+{
+    //taking input from the user
+    cout<<"\nEnter Employee Number: ";
+    cin>>obj1.employee_number;
+    cout<<"Enter First Name: ";
+    cin>>obj1.e_firstName;
+    cout<<"Enter Last Name: ";
+    cin>>obj1.e_lastName;
+    cout<<endl;
+}
+
 void account_query::read_data()
 {
     //taking input from the user
@@ -45,20 +75,37 @@ void account_query::show_data()
     cout<<"Current Balance: Rs.  "<<obj.total_Balance<<endl;
     cout<<"-------------------------------"<<endl;
 }
+void employee_query::show_data()
+{
+    //Displaying the data entered by the user
+    cout<<"Employee Number: "<<obj1.employee_number<<endl;
+    cout<<"First Name: "<<obj1.e_firstName<<endl;
+    cout<<"Last Name: "<<obj1.e_lastName<<endl;
+    cout<<"-------------------------------"<<endl;
+}
 void account_query::write_rec()
 {
     //Writing data to the binary file
     ofstream outfile;
-    outfile.open("record.bank", ios::binary|ios::app);
+    outfile.open("record.bin", ios::binary|ios::app);
     read_data();
     outfile.write((char*)&obj , sizeof(obj));
+    outfile.close();
+}
+void employee_query::write_rec()
+{
+    //Writing data to the binary file
+    ofstream outfile;
+    outfile.open("e_record.bin", ios::binary|ios::app);
+    read_data();
+    outfile.write((char*)&obj1 , sizeof(obj1));
     outfile.close();
 }
 void account_query::read_rec()
 {
     //Reading data from the binary file
     ifstream infile;
-    infile.open("record.bank", ios::binary);
+    infile.open("record.bin", ios::binary);
     if(!infile) //Checking if the file is open
     {
         cout<<"Error in Opening! File Not Found!!"<<endl;
@@ -75,12 +122,33 @@ void account_query::read_rec()
     }
     infile.close();
 }
+void employee_query::read_rec()
+{
+    //Reading data from the binary file
+    ifstream infile;
+    infile.open("e_record.bin", ios::binary);
+    if(!infile) //Checking if the file is open
+    {
+        cout<<"Error in Opening! File Not Found!!"<<endl;
+        return;
+    }
+    cout<<"\n****Data from file****"<<endl;
+    while(!infile.eof())
+    {
+        //Conditional loop to check if any data in on the file
+        if((infile.read((char*)&obj1 , sizeof(obj1))) > 0)
+           {
+               show_data();
+           }
+    }
+    infile.close();
+}
 void account_query::search_rec()
 {
     //Searching record from the file
     int n;
     ifstream infile;
-    infile.open("record.bank", ios::binary);
+    infile.open("record.bin", ios::binary);
     if(!infile)
     {
         cout<<"\nError in opening! File Not Found!!"<<endl;
@@ -100,7 +168,7 @@ void account_query::edit_rec()
     //Function to edit the records
     int n;
     fstream iofile;
-    iofile.open("record.bank", ios::in|ios::binary);
+    iofile.open("record.bin", ios::in|ios::binary);
     if(!iofile)
     {
         cout<<"\nError in opening! File Not Found!!"<<endl;
@@ -116,7 +184,7 @@ void account_query::edit_rec()
     cout<<"Record "<<n<<" has following data"<<endl;
     show_data();
     iofile.close();
-    iofile.open("record.bank", ios::out|ios::in|ios::binary);
+    iofile.open("record.bin", ios::out|ios::in|ios::binary);
     iofile.seekp((n-1) * sizeof(obj));
     cout<<"\nEnter data to Modify "<<endl;
     read_data();
@@ -127,7 +195,7 @@ void account_query::delete_rec()
     //Function to delete any record
     int n;
     ifstream infile;
-    infile.open("record.bank", ios::binary);
+    infile.open("record.bin", ios::binary);
     if(!infile)
     {
         cout<<"\nError in opening! File Not Found!!"<<endl;
@@ -139,7 +207,7 @@ void account_query::delete_rec()
     cout<<"\n Enter Record Number to Delete: ";
     cin>>n;
     fstream tmpfile; //Creating a temporary file
-    tmpfile.open("tmpfile.bank", ios::out|ios::binary);
+    tmpfile.open("tmpfile.bin", ios::out|ios::binary);
     infile.seekg(0); //Seeking to first char of file
     for(int i=0; i<count; i++)
     {
@@ -150,8 +218,8 @@ void account_query::delete_rec()
     }
     infile.close();
     tmpfile.close();
-    remove("record.bank");
-    rename("tmpfile.bank", "record.bank");
+    remove("record.bin");
+    rename("tmpfile.bin", "record.bin");
 }
 int main()
 {
